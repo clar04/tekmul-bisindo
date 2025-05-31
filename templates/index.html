@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AR Sign Language Detection</title>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const videoElement = document.getElementById('video'); // Ini akan merujuk ke video di dalam #video-container
+    const gestureResultElement = document.getElementById('gestureResult');
+    const arContainer = document.getElementById('ar-container');
+    const modelViewerElement = document.getElementById('ar-model');
+
+    if (!videoElement) {
+        console.error("INDEX.HTML: Video element (#video) tidak ditemukan saat DOMContentLoaded.");
+    }
+    if (!gestureResultElement) {
+        console.error("INDEX.HTML: gestureResultElement (#gestureResult) tidak ditemukan saat DOMContentLoaded.");
+    }
+
+
+    // Menyembunyikan model 3D secara default
+    hideModel();
+
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        // Pastikan target mutasi adalah gestureResultElement atau salah satu anaknya
+        if (mutation.target === gestureResultElement || gestureResultElement.contains(mutation.target)) {
+            const recognizedText = gestureResultElement.textContent || "";
+            const parts = recognizedText.split(" ");
+            const recognizedLetter = parts[0];
+
+            console.log("Huruf terdeteksi dari observer:", recognizedLetter);
+            
+            if (recognizedLetter && recognizedLetter !== '-' && recognizedLetter.length === 1 && /^[A-Z]$/i.test(recognizedLetter)) { // Pastikan itu satu huruf alfabet
+                showModelBasedOnLetter(recognizedLetter.toLowerCase());
+            } else {
+                hideModel();
+            }
+        }
+      });
+    });
+    
+    // Pastikan gestureResultElement ada sebelum mengobservasi
+    if (gestureResultElement) {
+        observer.observe(gestureResultElement, {
+          characterData: true, // mengamati perubahan teks
+          childList: true,     // mengamati penambahan/penghapusan node anak
+          subtree: true        // mengamati perubahan di semua turunan
+        });
+    } else {
+        console.error("Tidak bisa memulai MutationObserver: gestureResultElement tidak ditemukan.");
+    }
+  });
+
+  // ... (sisa fungsi showModelBasedOnLetter dan hideModel tetap sama) ...
+  // Fungsi untuk menampilkan model sesuai huruf
+  function showModelBasedOnLetter(letter) {
+    const arContainer = document.getElementById('ar-container');
+    const modelViewer = document.getElementById('ar-model');
+    
+    if (arContainer && modelViewer) {
+      let modelSrc = ''; 
+      
+      switch(letter) {
+        case 'a': modelSrc = '/static/models/apple.glb'; break;
+        case 'b': modelSrc = '/static/models/banana.glb'; break;
+        case 'c': modelSrc = '/static/models/cat.glb'; break; 
+        case 'd': modelSrc = '/static/models/dog.glb'; break;
+        case 'e': modelSrc = '/static/models/egg.glb'; break;
+        case 'f': modelSrc = '/static/models/flower.glb'; break; 
+        case 'g': modelSrc = '/static/models/glasses.glb'; break; 
+        case 'h': modelSrc = '/static/models/headphones.glb'; break; 
+        case 'i': modelSrc = '/static/models/ice.glb'; break; 
+        case 'j': modelSrc = '/static/models/jacket.glb'; break; 
+        case 'k': modelSrc = '/static/models/keychain.glb'; break; 
+        case 'l': modelSrc = '/static/models/lamp.glb'; break; 
+        case 'm': modelSrc = '/static/models/mug.glb'; break; 
+        case 'n': modelSrc = '/static/models/newspaper.glb'; break; 
+        case 'o': modelSrc = '/static/models/onion.glb'; break; 
+        case 'p': modelSrc = '/static/models/pillow.glb'; break; 
+        case 'q': modelSrc = '/static/models/qr.glb'; break; 
+        case 'r': modelSrc = '/static/models/remote.glb'; break; 
+        case 's': modelSrc = '/static/models/spoon.glb'; break; 
+        case 't': modelSrc = '/static/models/television.glb'; break; 
+        case 'u': modelSrc = '/static/models/umbrella.glb'; break; 
+        case 'v': modelSrc = '/static/models/vase.glb'; break; 
+        case 'w': modelSrc = '/static/models/wallet.glb'; break; 
+        case 'x': modelSrc = '/static/models/xbox.glb'; break; 
+        case 'y': modelSrc = '/static/models/yoga.glb'; break; 
+        case 'z': modelSrc = '/static/models/zipper.glb'; break; 
+        default:
+          console.log("Huruf tidak dikenali atau model tidak tersedia:", letter);
+          hideModel(); 
+          return; 
+      }
+
+      console.log("Mengubah model ke:", modelSrc);
+      modelViewer.setAttribute('src', modelSrc);
+      modelViewer.style.display = 'block'; 
+      arContainer.style.display = 'flex'; 
+    } else {
+      console.error("Element ar-container atau ar-model tidak ditemukan");
+    }
+  }
+  
+  function hideModel() {
+    const arContainer = document.getElementById('ar-container');
+    const modelViewer = document.getElementById('ar-model');
+    if (arContainer) {
+      arContainer.style.display = 'none';
+    }
+    if (modelViewer) {
+        modelViewer.style.display = 'none';
+        modelViewer.setAttribute('src', ''); 
+    }
+  }
+  </script>
+
+  <style>
+    /* ... CSS Anda tetap sama ... */
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #video-container { /* Container untuk video agar bisa di-center dan tidak fullscreen */
+        position: relative;
+        width: 80vw; /* Sesuaikan ukuran */
+        max-width: 640px; /* Batas maksimal */
+        height: 60vh;
+        max-height: 480px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        overflow: hidden; /* Agar video tidak keluar dari border-radius */
+        z-index: 1;
+    }
+
+    #video { /* Video di dalam container */
+      display: block; /* Hilangkan space di bawah video */
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cover agar memenuhi container tanpa distorsi */
+    }
+
+    #gestureResult {
+      position: fixed;
+      top: 20px; /* Lebih dekat ke atas */
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 30px;
+      background: rgba(255,255,255,0.95);
+      color: #111;
+      font-size: 48px; /* Sedikit lebih kecil agar tidak terlalu dominan */
+      font-weight: bold;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      opacity: 0;
+      z-index: 100;
+      min-width: 80px; /* Lebar minimum */
+      text-align: center;
+    }
+    
+    #gestureResult.visible { /* Kelas untuk kontrol animasi */
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+
+    @keyframes fadeInZoom { /* Animasi bisa tetap atau disederhanakan */
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    #ar-container {
+      position: fixed;
+      top: 100px; /* Sesuaikan posisi di atas video atau di tempat lain */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%; /* Lebar container model */
+      max-width: 300px;
+      height: auto; /* Tinggi otomatis berdasarkan model */
+      aspect-ratio: 1 / 1; /* Menjaga rasio aspek (opsional) */
+      display: none; /* Defaultnya disembunyikan */
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none; /* Agar tidak mengganggu interaksi dengan elemen di bawahnya jika transparan */
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      display: none; /* Defaultnya disembunyikan */
+      pointer-events: auto; /* Aktifkan pointer events untuk model-viewer itu sendiri */
+    }
+  </style>
+</head>
+<body>
+  <div id="video-container">
+      <video id="video" autoplay playsinline muted></video>
+  </div>
+  
+  <div id="gestureResult" class="">-</div>
+
+  <div id="ar-container">
+    <model-viewer 
+      id="ar-model"
+      src="" /* src awal kosong */
+      ar 
+      ar-modes="scene-viewer webxr quick-look" 
+      auto-rotate 
+      camera-controls 
+      exposure="1"
+      shadow-intensity="1"
+      disable-zoom /* Opsional: matikan zoom jika tidak perlu */
+      interaction-prompt="none" /* Matikan prompt interaksi default */
+      >
+    </model-viewer>
+  </div>
+</body>
+</html>
