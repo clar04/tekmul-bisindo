@@ -95,7 +95,7 @@ os.environ['GLOG_minloglevel'] = '2'
 
 ## 📊 Dataset
 Proyek ini menggunakan dataset BISINDO (Bahasa Isyarat Indonesia) yang tersedia di Kaggle:
-Dataset: Indonesian Sign Language (BISINDO)
+[Dataset: Indonesian Sign Language (BISINDO)](https://www.kaggle.com/datasets/agungmrf/indonesian-sign-language-bisindo)
 Dataset ini berisi koleksi gambar bahasa isyarat Indonesia untuk huruf A-Z yang digunakan untuk melatih model machine learning dalam mengenali gesture tangan.
 
 ---
