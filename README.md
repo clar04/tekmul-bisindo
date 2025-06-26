@@ -1,4 +1,5 @@
 # 🧠 ARSignID - Augmented Reality Sign Indonesia
+![image](https://github.com/user-attachments/assets/88dbc136-88e0-4116-be46-a9e198be8bff)
 
 Proyek ini bertujuan untuk mendeteksi bahasa isyarat Indonesia (BISINDO) menggunakan webcam secara real-time dan model machine learning yang telah dilatih. Proyek ini dibangun dengan Python, Flask sebagai backend server, OpenCV untuk pemrosesan gambar, MediaPipe untuk deteksi tangan, dan TensorFlow untuk klasifikasi isyarat.
 
@@ -89,6 +90,13 @@ Sudah disuppress otomatis menggunakan:
 ```python
 os.environ['GLOG_minloglevel'] = '2'
 ```
+
+---
+
+## 📊 Dataset
+Proyek ini menggunakan dataset BISINDO (Bahasa Isyarat Indonesia) yang tersedia di Kaggle:
+Dataset: Indonesian Sign Language (BISINDO)
+Dataset ini berisi koleksi gambar bahasa isyarat Indonesia untuk huruf A-Z yang digunakan untuk melatih model machine learning dalam mengenali gesture tangan.
 
 ---
 
